@@ -30,7 +30,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <EEPROM.h>
 
-String val = "1234abcdef";
+String val = "prueba Eprom";
 
 Servo servoLata;  // Crear un objeto servoLata
 Servo servoGancho;  // Crear un objeto servoGancho
@@ -43,9 +43,8 @@ LiquidCrystal_I2C lcd(0x27,16,2);  //
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Crea objeto mfrc522 enviando pines de slave select y reset
 //Funcion que muestra los datos de la tarjeta leída
 byte LecturaUID[4];         // crea array para almacenar el UID leido
-byte Usuario1[4] = {0x04, 0xF2, 0xF7, 0x91} ;   // UID de tarjeta leido en programa 1
-byte Usuario2[4] = {0x07, 0x29, 0xB7, 0x60} ;   // UID de llavero leido en programa 1
-
+byte Usuario1[4] = {0x03, 0xF5, 0xF4, 0x92} ;   // UID de tarjeta leido en programa 1
+byte Usuario2[4] = {0xA0, 0x93, 0x2D, 0x21} ;   // UID de llavero leido en programa 1
 void mostrarByteArray(byte* buffer, byte bufferSize) {
   for (byte i = 0; i < bufferSize; i++) {
     Serial.print(buffer[i] < 0x10 ? " 0" : " ");
@@ -112,6 +111,7 @@ void setup() {
             String str = "";
             EEPROM.get(address, str);
             Serial.println("Esto he leido =" + str);
+             //servoLata.write(0); // Mueve MG996R's 360º
 }
 
 void loop() {
@@ -136,13 +136,15 @@ void loop() {
               }
               content.toUpperCase();
               if (comparaUID(LecturaUID, Usuario1)) {  // llama a funcion comparaUID con Usuario1
-                    Serial.println("Bienvenido Mario, pulsa un botón para elegir el producto"); // si retorna verdadero muestra texto bienvenida
+                    Serial.println("Bienvenido Maui, pulsa un botón para elegir el producto"); // si retorna verdadero muestra texto bienvenida
                     Serial.println("content");
                     Serial.println(content);
               }
             Serial.println("Contenido sub");
             Serial.println(content.substring(1));
-            if (content.substring(1) == "04 F2 F7 91") //change here the UID of card/cards or tag/tags that you want to give access
+            //
+            //Mario - 02 F1 F4 75
+            if (content.substring(1) == "61 F1 F3 76") //change here the UID of card/cards or tag/tags that you want to give access
             {
                 if (digitalRead(btnI) == HIGH) // Si el botón A está presionado endiendo el Led
                 {
@@ -166,13 +168,16 @@ void loop() {
                     lcd.print("Vuelva ");
                     lcd.print("pronto");
                     lcd.print(".  ");
-                    
+                  
                     // Desplazamos a la posición 0º
-                    servoLata.write(360); // Mueve MG996R's 360º
+                    servoLata.write(0); // Mueve MG996R's 360º
+
+                     servoLata.write(360);
+                    delay(1000);  // Esperamos 1 segundo
+                     servoLata.write(30);
                     delay(1000); // Espera 1 seg
                     // Desplazamos a la posición 0º
-                    servoLata.write(0); // Mueve MG996R's 0º
-                    delay(1000); // Espera 1 seg
+                   
                     lcd.clear();
                     textoLCD();
                 }
@@ -200,11 +205,11 @@ void loop() {
                     lcd.print("pronto");
                     lcd.print(".  ");
                     // Desplazamos a la posición 90º
+                    
                     servoGancho.write(0);
-                    delay(1000);  // Esperamos 1 segundo
-                    // Desplazamos a la posición 180º
-                    servoGancho.write(360);
-                    delay(1000);  // Esperamos 1 segundo
+                    delay(1000);  // Esperamos 1 segundo    
+                    servoGancho.write(180);
+                    delay(1000);  // Esperamos 1 segundo            
                     lcd.clear();
                     textoLCD();         
                 }
